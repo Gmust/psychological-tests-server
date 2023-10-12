@@ -1,10 +1,19 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+import { ConfigModule } from "@nestjs/config";
+import { MongooseConfigService } from "./config/MongooseConfigService";
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule.forRoot()],
+      useClass: MongooseConfigService
+    }),
+    AuthModule,
+    UsersModule
+  ]
 })
-export class AppModule {}
+export class AppModule {
+}
