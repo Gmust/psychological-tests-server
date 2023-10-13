@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
+import { TestSchema } from '../schemas/test.schema';
+import { Test } from '@nestjs/testing';
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import * as bcrypt from 'bcrypt';
     ]),
     MongooseModule.forFeature([
       { schema: UserSchema, name: User.name },
+      { schema: TestSchema, name: Test.name },
     ]),
   ],
   providers: [UsersService],

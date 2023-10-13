@@ -19,11 +19,12 @@ export class LoginGuard implements CanActivate {
     const user = await this.userService.findUserByEmail(email);
     if (!user) throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
 
-    const isMatch = bcrypt.match(password, user.password);
-    if(!isMatch){
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    return true
+    return true;
   }
 }

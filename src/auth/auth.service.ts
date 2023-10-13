@@ -15,7 +15,7 @@ export class AuthService {
 
   async generateAccessToken(user: User) {
     return {
-      access_token: this.jwtService.sign({ user }),
+      access_token: this.jwtService.sign({ user }, { secret: process.env.JWT_SECRET }),
     };
   }
 
