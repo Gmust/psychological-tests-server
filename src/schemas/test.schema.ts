@@ -22,7 +22,7 @@ export class Test {
 
   @Prop({
     type: Number,
-    required: [true, 'Test must amount of points'],
+    required: [true, 'Test must have amount of points'],
   })
   points;
 
