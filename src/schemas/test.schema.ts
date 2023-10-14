@@ -10,6 +10,7 @@ export class Test {
   @Prop({
     type: String,
     unique: [true, 'There are already test with this title'],
+    required: [true, 'Title is requires']
   })
   title;
 
@@ -27,8 +28,8 @@ export class Test {
   points;
 
   @Prop({
-    type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Result' }],
-    required: [true, 'Results must be provided'],
+    type: String,
+    required: [true, 'Result must be provided'],
   })
   result;
 }

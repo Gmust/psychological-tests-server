@@ -29,7 +29,7 @@ export class AuthService {
   }
 
   async verifyToken(token: string) {
-    return this.jwtService.verify(token);
+    return this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
   }
 
   async parseJwt(token: string) {
