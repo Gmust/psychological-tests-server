@@ -1,25 +1,36 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Role } from '../../utils/roles.enum';
-import { ROLES_KEY } from '../../utils/roles.decorator';
+import { Observable } from 'rxjs';
+import { AuthService } from '../../auth/auth.service';
+
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-
-  constructor(private reflector: Reflector) {
+  constructor(private reflector: Reflector, private authService: AuthService) {
   }
 
-  canActivate(context: ExecutionContext): boolean {
+  matchRoles(roles: string[], userRole: string) {
+    return roles.some((role) => role === userRole);
+  }
 
-    const requiresRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    if (!requiresRoles) {
+  async canActivate(
+    context: ExecutionContext,
+    //@ts-ignore
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    if (!roles) {
       return true;
     }
+    const request = context.switchToHttp().getRequest();
 
-    const { user } = context.switchToHttp().getRequest();
-    return requiresRoles.some((role) => user.role.includes(role));
+    const token = request.headers.authorization.split(' ');
+
+    const user = await this.authService.getUserByTokenData(token[1]);
+
+    if (this.matchRoles(roles, user.role)) {
+      return true;
+    } else {
+      throw new UnauthorizedException('Something went wrong', 'You must be an admin to use this route');
+    }
   }
 }
