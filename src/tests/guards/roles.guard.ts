@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { response } from 'express';
 
 
 @Injectable()
@@ -22,6 +23,10 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
+
+    if(!request.headers.authorization){
+      throw  new UnauthorizedException('Something went wrong', 'You must provide authorization token')
+    }
 
     const token = request.headers.authorization.split(' ');
 
